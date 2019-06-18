@@ -63,6 +63,9 @@ namespace SharePointPnP.PowerShell.Commands.Lists
             "\n\nHyperlink or Picture: -Values @{\"HyperlinkField\" = \"https://github.com/OfficeDev/, OfficePnp\"}")]
         public Hashtable Values;
 
+        [Parameter(Mandatory = false, HelpMessage = "Do not execute query after update. Useful for batching.")]
+        public SwitchParameter NoExecuteQuery;
+
 #if !ONPREMISES
         [Parameter(Mandatory = false, HelpMessage = "Update the item without creating a new version.")]
         public SwitchParameter SystemUpdate;
@@ -103,7 +106,10 @@ namespace SharePointPnP.PowerShell.Commands.Lists
 
                         item["ContentTypeId"] = ct.StringId;
                         item.Update();
-                        ClientContext.ExecuteQueryRetry();
+                        if (!NoExecuteQuery)
+                        {
+                            ClientContext.ExecuteQueryRetry();
+                        }
                     }
                 }
                 if (Values != null)
